@@ -1,0 +1,14 @@
+const express = require("express");
+const path = require("path");
+const http = require("http");
+const cors = require("cors"); 
+const { routesInit } = require("./routes/config_routes");
+require("./db/mongoConnect");
+const app1 = express();
+app1.use(cors()); 
+app1.use(express.json());
+app1.use(express.static(path.join(__dirname, "public")));
+routesInit(app1);
+const server1 = http.createServer(app1);
+let port1 = process.env.PORT || "5000";
+server1.listen(port1);
