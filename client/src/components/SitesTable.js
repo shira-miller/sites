@@ -75,7 +75,6 @@ export default function SitesTable() {
         <div className="container mt-4">
             <h2>Sites List</h2>
 
-            {/* טופס הוספה */}
             <div className="mb-4 p-3 border rounded">
                 <h5>Add New Site</h5>
                 <div className="row g-2">
@@ -97,7 +96,6 @@ export default function SitesTable() {
                 </div>
             </div>
 
-            {/* טבלה */}
             <table className="table table-bordered">
                 <thead>
                     <tr>
