@@ -4,8 +4,21 @@ const { SiteModel, validateSite } = require("../models/siteModel");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    const sites = await SiteModel.find();
-    res.json(sites);
+    let perPage = Math.min(20, parseInt(req.query.perPage)) || 4;
+    let page = parseInt(req.query.page) || 1;
+    let sort = req.query.sort;
+    let reverse = req.query.reverse === "yes" ? 1 : -1;
+    try {
+        const totalSites = await SiteModel.countDocuments();
+        const sites = await SiteModel
+            .find()
+            .sort({ [sort]: reverse })
+            .skip((page - 1) * perPage)
+            .limit(perPage);
+        res.json({sites, totalSites});
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 router.get("/:id", async (req, res) => {

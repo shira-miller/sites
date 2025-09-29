@@ -8,20 +8,24 @@ export default function SitesTable() {
     const [formData, setFormData] = useState({ name: "", url: "", image: "", score: 0 });
     const [newSite, setNewSite] = useState({ name: "", url: "", image: "", score: 0 });
 
+    const [page, setPage] = useState(1);
+    const [perPage] = useState(4);
+    const [totalSites, setTotalSites] = useState(0);
     useEffect(() => {
         fetchSites();
-    }, []);
+    }, [page]);
 
     const fetchSites = async () => {
         try {
-            const resp = await fetch(API_URL);
+            const resp = await fetch(`${API_URL}?page=${page}&perPage=${perPage}`);
             const data = await resp.json();
-            setSites(data);
+            setSites(data.sites);
+            setTotalSites(data.totalSites);
         } catch (err) {
             console.error("Failed to fetch sites:", err);
         }
     };
-
+    const totalPages = Math.ceil(totalSites / perPage);
     const handleDelete = async (id) => {
         await fetch(`${API_URL}/${id}`, { method: "DELETE" });
         fetchSites();
@@ -126,18 +130,43 @@ export default function SitesTable() {
                                     : site.score}
                             </td>
                             <td>
-                                {editingSite === site._id ?
-                                    <button className="btn btn-success btn-sm" onClick={handleSave}>Save</button> :
+                                {editingSite === site._id ? (
+                                    <button className="btn btn-success btn-sm" onClick={handleSave}>Save</button>
+                                ) : (
                                     <>
                                         <button className="btn btn-primary btn-sm me-2" onClick={() => handleEdit(site)}>Edit</button>
                                         <button className="btn btn-danger btn-sm" onClick={() => handleDelete(site._id)}>Delete</button>
                                     </>
-                                }
+                                )}
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+
+            <nav>
+                <ul className="pagination justify-content-center">
+                    <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+                        <button className="page-link" onClick={() => setPage(page - 1)}>
+                            «
+                        </button>
+                    </li>
+
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+                        <li key={num} className={`page-item ${page === num ? "active" : ""}`}>
+                            <button className="page-link" onClick={() => setPage(num)}>
+                                {num}
+                            </button>
+                        </li>
+                    ))}
+
+                    <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
+                        <button className="page-link" onClick={() => setPage(page + 1)}>
+                            »
+                        </button>
+                    </li>
+                </ul>
+            </nav>
         </div>
     );
 }
