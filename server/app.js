@@ -10,5 +10,6 @@ app1.use(express.json());
 app1.use(express.static(path.join(__dirname, "public")));
 routesInit(app1);
 const server1 = http.createServer(app1);
+console.log(process.env.PORT);
 let port1 = process.env.PORT || "5000";
 server1.listen(port1);

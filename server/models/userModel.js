@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 const joi = require("joi");
 const jwt = require("jsonwebtoken");
+const config = require("../config/secret");
 let UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
+    role: { type: String, default: "user" },
     date_created: { type: Date, default: Date.now() }
 })
 exports.UserModel = mongoose.model("users", UserSchema);
@@ -16,9 +18,9 @@ exports.createToken = function (user) {
             name: user.name,
             email: user.email
         },
-        "jwtPrivateKey",
-        { 
-            expiresIn: "1h" 
+        config.tokenSecret,
+        {
+            expiresIn: "1h"
         }
     );
     return token;

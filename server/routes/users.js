@@ -1,6 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const { auth } = require("../middlewares/auth");
+const { auth, authAdmin } = require("../middlewares/auth");
 const jwt = require("jsonwebtoken");
 const { validUser, UserModel, validLogin, createToken } = require("../models/userModel");
 const router = express.Router();
@@ -68,6 +68,16 @@ router.post("/login", async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "err", err });
+    }
+});
+
+router.get("/usersList", authAdmin, async (req, res) => {
+    try {
+        let users = await UserModel.find({}, { password: 0 });
+        res.json(users);
+    }
+    catch (err) {
+        res.status(500).json({ message: err.message });
     }
 });
 
