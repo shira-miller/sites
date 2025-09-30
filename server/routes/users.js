@@ -47,11 +47,13 @@ router.post("/", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
+    console.log("Login router loaded");
     let validBody = validLogin(req.body);
     if (validBody.error) {
         return res.status(400).json(validBody.error.details);
     }
     try {
+        console.log("login", req.body);
         let user = await UserModel.findOne({ email: req.body.email });
         console.log(user);
         if (!user) {
@@ -67,6 +69,7 @@ router.post("/login", async (req, res) => {
         res.json({ token: token });
     } catch (err) {
         console.log(err);
+        console.log("login", req.body);
         res.status(500).json({ message: "err", err });
     }
 });
